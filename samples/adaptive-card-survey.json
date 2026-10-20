@@ -1,0 +1,52 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.0",
+  "hideOriginalBody": true,
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "{{surveyTitle}}",
+      "size": "large",
+      "weight": "bolder",
+      "wrap": true
+    },
+    {
+      "type": "TextBlock",
+      "text": "Your feedback takes less than a minute and stays anonymous.",
+      "isSubtle": true,
+      "wrap": true
+    },
+    {
+      "type": "Input.ChoiceSet",
+      "id": "satisfaction",
+      "style": "expanded",
+      "title": "How satisfied are you?",
+      "value": "4",
+      "choices": [
+        { "title": "Very satisfied", "value": "5" },
+        { "title": "Satisfied", "value": "4" },
+        { "title": "Neutral", "value": "3" },
+        { "title": "Dissatisfied", "value": "2" },
+        { "title": "Very dissatisfied", "value": "1" }
+      ]
+    },
+    {
+      "type": "Input.Text",
+      "id": "comments",
+      "title": "Anything we should improve?",
+      "isMultiline": true,
+      "placeholder": "Optional"
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Http",
+      "title": "Submit feedback",
+      "method": "POST",
+      "url": "{{responseUrl}}",
+      "headers": [{ "name": "Content-Type", "value": "application/json" }],
+      "body": "{\"satisfaction\":\"{{satisfaction.value}}\",\"comments\":\"{{comments.value}}\"}"
+    }
+  ]
+}

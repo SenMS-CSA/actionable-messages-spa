@@ -1,0 +1,111 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.0",
+  "hideOriginalBody": true,
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "Expense report awaiting your approval",
+      "size": "large",
+      "weight": "bolder",
+      "wrap": true
+    },
+    {
+      "type": "ColumnSet",
+      "columns": [
+        {
+          "type": "Column",
+          "width": "auto",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "{{requester}}",
+              "weight": "bolder",
+              "wrap": true
+            },
+            {
+              "type": "TextBlock",
+              "text": "Submitted {{submittedOn}}",
+              "isSubtle": true,
+              "spacing": "none",
+              "wrap": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "FactSet",
+      "facts": [
+        { "title": "Report", "value": "{{reportId}}" },
+        { "title": "Amount", "value": "${{amount}}" },
+        { "title": "Cost center", "value": "{{costCenter}}" }
+      ]
+    },
+    {
+      "type": "TextBlock",
+      "text": "{{description}}",
+      "wrap": true
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.ShowCard",
+      "title": "Approve",
+      "card": {
+        "type": "AdaptiveCard",
+        "body": [
+          {
+            "type": "Input.Text",
+            "id": "approveComment",
+            "title": "Comment",
+            "isMultiline": true,
+            "placeholder": "Optional comment"
+          }
+        ],
+        "actions": [
+          {
+            "type": "Action.Http",
+            "title": "Submit approval",
+            "method": "POST",
+            "url": "https://example.com/api/expenses/{{reportId}}/approve",
+            "headers": [{ "name": "Content-Type", "value": "application/json" }],
+            "body": "{\"decision\":\"approved\",\"comment\":\"{{approveComment.value}}\"}"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Action.ShowCard",
+      "title": "Reject",
+      "card": {
+        "type": "AdaptiveCard",
+        "body": [
+          {
+            "type": "Input.Text",
+            "id": "rejectComment",
+            "title": "Reason",
+            "isMultiline": true,
+            "placeholder": "Why are you rejecting this report?"
+          }
+        ],
+        "actions": [
+          {
+            "type": "Action.Http",
+            "title": "Submit rejection",
+            "method": "POST",
+            "url": "https://example.com/api/expenses/{{reportId}}/reject",
+            "headers": [{ "name": "Content-Type", "value": "application/json" }],
+            "body": "{\"decision\":\"rejected\",\"comment\":\"{{rejectComment.value}}\"}"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Action.OpenUrl",
+      "title": "View in portal",
+      "url": "https://example.com/expenses/{{reportId}}"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "name": "actionable-messages-spa",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sends Outlook Actionable Messages built with the Actionable Messages Designer through Microsoft Graph using Entra ID application credentials.",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js 3000"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

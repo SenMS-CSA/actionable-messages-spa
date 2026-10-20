@@ -1,0 +1,49 @@
+{
+  "@type": "MessageCard",
+  "@context": "https://schema.org/extensions",
+  "themeColor": "0076D7",
+  "summary": "Build {{buildNumber}} finished",
+  "title": "Build {{buildNumber}} — {{buildStatus}}",
+  "sections": [
+    {
+      "activityTitle": "{{pipelineName}}",
+      "activitySubtitle": "Triggered by {{triggeredBy}}",
+      "activityImage": "https://adaptivecards.io/content/cats/1.png",
+      "facts": [
+        { "name": "Branch", "value": "{{branch}}" },
+        { "name": "Commit", "value": "{{commit}}" },
+        { "name": "Duration", "value": "{{duration}}" }
+      ],
+      "markdown": true,
+      "text": "{{summaryText}}"
+    }
+  ],
+  "potentialAction": [
+    {
+      "@type": "ActionCard",
+      "name": "Add a note",
+      "inputs": [
+        {
+          "@type": "TextInput",
+          "id": "note",
+          "isMultiline": true,
+          "title": "Note for the team"
+        }
+      ],
+      "actions": [
+        {
+          "@type": "HttpPOST",
+          "name": "Post note",
+          "target": "https://example.com/api/builds/{{buildNumber}}/notes",
+          "headers": [{ "name": "Content-Type", "value": "application/json" }],
+          "body": "{\"note\":\"{{note.value}}\"}"
+        }
+      ]
+    },
+    {
+      "@type": "OpenUri",
+      "name": "View build",
+      "targets": [{ "os": "default", "uri": "https://example.com/builds/{{buildNumber}}" }]
+    }
+  ]
+}

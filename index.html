@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Actionable Message Sender</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <span class="brand-mark">AM</span>
+      <div>
+        <h1>Actionable Message Sender</h1>
+        <p class="tagline">Send Outlook Actionable Messages designed with the Actionable Messages Designer</p>
+      </div>
+    </div>
+
+    <div class="account">
+      <div id="accountInfo" class="account-info hidden">
+        <span class="account-name">App-only (client credentials)</span>
+        <span id="accountEmail" class="account-email"></span>
+      </div>
+    </div>
+  </header>
+
+  <div id="configBanner" class="banner banner-warn hidden">
+    <span>The server has no Entra ID application credentials. Copy <code>.env.example</code> to <code>.env</code>,
+      set <code>TENANT_ID</code>, <code>CLIENT_ID</code> and <code>CLIENT_SECRET</code>, then restart the
+      server.</span>
+  </div>
+
+  <main class="layout">
+    <section class="panel">
+      <div class="panel-head">
+        <h2>1. Card template</h2>
+        <div class="panel-actions">
+          <select id="sampleSelect" class="input input-sm" aria-label="Load a sample template">
+            <option value="">Load sample…</option>
+            <option value="samples/adaptive-card-approval.json">Adaptive Card – expense approval</option>
+            <option value="samples/adaptive-card-survey.json">Adaptive Card – survey</option>
+            <option value="samples/message-card-legacy.json">MessageCard (legacy) – build status</option>
+          </select>
+          <label class="btn btn-ghost btn-sm" for="fileInput">Upload JSON</label>
+          <input id="fileInput" type="file" accept=".json,application/json" class="visually-hidden" />
+          <button id="formatBtn" class="btn btn-ghost btn-sm" type="button">Format</button>
+        </div>
+      </div>
+
+      <p class="hint">
+        Paste the JSON produced by the
+        <a href="https://amdesigner.azurewebsites.net/" target="_blank" rel="noopener noreferrer">Actionable Messages
+          Designer</a>. Both Adaptive Cards and legacy MessageCards are supported.
+      </p>
+
+      <textarea id="cardJson" class="code-area" spellcheck="false"
+        placeholder="Paste your Actionable Message JSON here…"></textarea>
+
+      <div class="status-row">
+        <span id="cardStatus" class="pill pill-muted">No template loaded</span>
+      </div>
+
+      <details class="collapsible">
+        <summary>Template variables (optional)</summary>
+        <p class="hint">
+          One <code>name=value</code> pair per line. Every <code>{{name}}</code> placeholder in the JSON above is
+          replaced before sending.
+        </p>
+        <textarea id="templateVars" class="code-area code-area-sm" spellcheck="false"
+          placeholder="requester=Jane Doe&#10;amount=1,250.00"></textarea>
+      </details>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h2>2. Message</h2>
+      </div>
+
+      <label class="field">
+        <span class="field-label">From <em>(mailbox to send as)</em></span>
+        <input id="fromMailbox" class="input" type="text" placeholder="user@contoso.com" />
+      </label>
+
+      <label class="field">
+        <span class="field-label">To <em>(semicolon or comma separated)</em></span>
+        <input id="toRecipients" class="input" type="text" placeholder="someone@contoso.com" />
+      </label>
+
+      <label class="field">
+        <span class="field-label">Cc <em>(optional)</em></span>
+        <input id="ccRecipients" class="input" type="text" placeholder="" />
+      </label>
+
+      <label class="field">
+        <span class="field-label">Subject</span>
+        <input id="subject" class="input" type="text" placeholder="Action required: expense approval" />
+      </label>
+
+      <label class="field">
+        <span class="field-label">Fallback body <em>(shown by clients that cannot render cards)</em></span>
+        <textarea id="fallbackText" class="input input-textarea"
+          placeholder="This message contains an actionable card. Open it in Outlook to respond."></textarea>
+      </label>
+
+      <label class="field">
+        <span class="field-label">Originator ID <em>(from the Actionable Email Developer Dashboard)</em></span>
+        <input id="originator" class="input" type="text" placeholder="00000000-0000-0000-0000-000000000000" />
+      </label>
+
+      <label class="checkbox">
+        <input id="saveToSentItems" type="checkbox" checked />
+        <span>Save a copy in Sent Items</span>
+      </label>
+
+      <div class="panel-head">
+        <h2>3. Send</h2>
+      </div>
+
+      <div class="button-row">
+        <button id="sendBtn" class="btn btn-primary" type="button" disabled>Send actionable message</button>
+        <button id="draftBtn" class="btn btn-secondary" type="button" disabled>Save as draft</button>
+        <button id="selfTestBtn" class="btn btn-secondary" type="button" disabled>Send to sender</button>
+        <button id="previewBtn" class="btn btn-ghost" type="button">Preview HTML</button>
+      </div>
+
+      <div id="log" class="log" role="status" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <dialog id="previewDialog" class="dialog dialog-wide">
+    <div class="dialog-body">
+      <h2>Generated HTML body</h2>
+      <p class="hint">This is the exact <code>message.body.content</code> that will be posted to Microsoft Graph.</p>
+      <pre id="previewContent" class="code-preview"></pre>
+      <div class="button-row dialog-actions">
+        <button id="copyPreviewBtn" class="btn btn-secondary" type="button">Copy</button>
+        <button id="closePreviewBtn" class="btn btn-ghost" type="button">Close</button>
+      </div>
+    </div>
+  </dialog>
+
+  <script src="js/cardBuilder.js"></script>
+  <script src="js/graph.js"></script>
+  <script src="js/app.js"></script>
+</body>
+
+</html>
